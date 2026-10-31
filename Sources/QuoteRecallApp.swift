@@ -66,7 +66,22 @@ final class QuoteStore: ObservableObject {
         } else {
             cards = Seed.inspectorCalls
         }
+        fillMissingFromSeed()
         save()
+    }
+
+    // Fills any empty quote whose prompt matches a built-in one, keeping progress and your own edits.
+    private func fillMissingFromSeed() {
+        cards = cards.map { card in
+            guard !card.isFilled,
+                  let seed = Seed.inspectorCalls.first(where: { $0.character == card.character && $0.moment == card.moment })
+            else { return card }
+            var c = card
+            c.quote = seed.quote
+            c.box = 0
+            c.due = Date()
+            return c
+        }
     }
 
     func save() {
@@ -144,26 +159,26 @@ final class QuoteStore: ObservableObject {
     }
 }
 
-// MARK: - Seed prompts (you add the exact words yourself from your copy)
+// MARK: - Built-in Inspector Calls quotes
 
 enum Seed {
     static let inspectorCalls: [QuoteCard] = [
-        QuoteCard(character: "Mr Birling", moment: "His speech about a man looking after himself and his own (Act 1)", quote: "", themes: ["Responsibility", "Class"]),
-        QuoteCard(character: "Mr Birling", moment: "His Titanic prediction (Act 1)", quote: "", themes: ["Dramatic irony", "Context"]),
-        QuoteCard(character: "Mr Birling", moment: "Mocking community with the bees image (Act 1)", quote: "", themes: ["Responsibility", "Socialism"]),
-        QuoteCard(character: "Mrs Birling", moment: "Dismissing the girl because of her class (Act 2)", quote: "", themes: ["Class"]),
-        QuoteCard(character: "Mrs Birling", moment: "Blaming the father of the child (Act 2)", quote: "", themes: ["Responsibility", "Dramatic irony"]),
-        QuoteCard(character: "Mrs Birling", moment: "Refusing to accept any blame (Act 2)", quote: "", themes: ["Responsibility", "Age"]),
-        QuoteCard(character: "Sheila", moment: "Admitting her guilt over Milwards", quote: "", themes: ["Responsibility", "Gender"]),
-        QuoteCard(character: "Sheila", moment: "Warning her mother about building a wall (Act 2)", quote: "", themes: ["Responsibility", "Age"]),
-        QuoteCard(character: "Sheila", moment: "Telling her parents they haven't learnt anything (Act 3)", quote: "", themes: ["Age", "Responsibility"]),
-        QuoteCard(character: "Eric", moment: "Telling his father he couldn't go to him for help (Act 3)", quote: "", themes: ["Age"]),
-        QuoteCard(character: "Eric", moment: "Confronting his mother over the death (Act 3)", quote: "", themes: ["Responsibility", "Age"]),
-        QuoteCard(character: "Gerald", moment: "Realising the girl is really dead (Act 2)", quote: "", themes: ["Responsibility"]),
-        QuoteCard(character: "Gerald", moment: "His relief once it might be a hoax (Act 3)", quote: "", themes: ["Age", "Class"]),
-        QuoteCard(character: "Inspector", moment: "Final speech: members of one body (Act 3)", quote: "", themes: ["Responsibility", "Socialism"]),
-        QuoteCard(character: "Inspector", moment: "Final speech: the warning about fire and blood (Act 3)", quote: "", themes: ["Context", "Responsibility"]),
-        QuoteCard(character: "Inspector", moment: "Final speech: the millions of Eva Smiths (Act 3)", quote: "", themes: ["Class", "Socialism"])
+        QuoteCard(character: "Mr Birling", moment: "His speech about a man looking after himself and his own (Act 1)", quote: "a man has to mind his own business and look after himself and his own", themes: ["Responsibility", "Class"]),
+        QuoteCard(character: "Mr Birling", moment: "His Titanic prediction (Act 1)", quote: "unsinkable, absolutely unsinkable", themes: ["Dramatic irony", "Context"]),
+        QuoteCard(character: "Mr Birling", moment: "Mocking community with the bees image (Act 1)", quote: "mixed up together like bees in a hive", themes: ["Responsibility", "Socialism"]),
+        QuoteCard(character: "Mrs Birling", moment: "Dismissing the girl because of her class (Act 2)", quote: "Girls of that class", themes: ["Class"]),
+        QuoteCard(character: "Mrs Birling", moment: "Blaming the father of the child (Act 2)", quote: "I blame the young man who was the father of the child", themes: ["Responsibility", "Dramatic irony"]),
+        QuoteCard(character: "Mrs Birling", moment: "Refusing to accept any blame (Act 2)", quote: "I accept no blame at all", themes: ["Responsibility", "Age"]),
+        QuoteCard(character: "Sheila", moment: "Admitting her guilt over Milwards", quote: "I know I'm to blame - and I'm desperately sorry", themes: ["Responsibility", "Gender"]),
+        QuoteCard(character: "Sheila", moment: "Warning her mother about building a wall (Act 2)", quote: "build up a kind of wall between us and that girl", themes: ["Responsibility", "Age"]),
+        QuoteCard(character: "Sheila", moment: "Telling her parents they haven't learnt anything (Act 3)", quote: "you don't seem to have learnt anything", themes: ["Age", "Responsibility"]),
+        QuoteCard(character: "Eric", moment: "Telling his father he couldn't go to him for help (Act 3)", quote: "you're not the kind of father a chap could go to when he's in trouble", themes: ["Age"]),
+        QuoteCard(character: "Eric", moment: "Confronting his mother over the death (Act 3)", quote: "you killed them both", themes: ["Responsibility", "Age"]),
+        QuoteCard(character: "Gerald", moment: "Realising the girl is really dead (Act 2)", quote: "I've suddenly realised - taken it in properly - that she's dead", themes: ["Responsibility"]),
+        QuoteCard(character: "Gerald", moment: "His relief once it might be a hoax (Act 3)", quote: "Everything's all right now, Sheila", themes: ["Age", "Class"]),
+        QuoteCard(character: "Inspector", moment: "Final speech: members of one body (Act 3)", quote: "We are members of one body", themes: ["Responsibility", "Socialism"]),
+        QuoteCard(character: "Inspector", moment: "Final speech: the warning about fire and blood (Act 3)", quote: "they will be taught it in fire and blood and anguish", themes: ["Context", "Responsibility"]),
+        QuoteCard(character: "Inspector", moment: "Final speech: the millions of Eva Smiths (Act 3)", quote: "millions and millions and millions of Eva Smiths and John Smiths", themes: ["Class", "Socialism"])
     ]
 }
 
